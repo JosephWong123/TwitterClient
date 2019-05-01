@@ -72,13 +72,10 @@ class TweetCell: UITableViewCell {
         }
     }
     @IBAction func retweet(_ sender: Any) {
-        let toBeRetweeted = !retweeted
-        if (toBeRetweeted) {
-            TwitterAPICaller.client?.retweet(tweetId: tweetId, success: {
-                self.setFavorite(true)
-            }, failure: { (Error) in
-                print("Could not retweet: \(Error)")
-            })
-        }
+        TwitterAPICaller.client?.retweet(tweetId: tweetId, success: {
+            self.setRetweeted(true)
+        }, failure: { (Error) in
+            print("Could not retweet: \(Error)")
+        })
     }
 }

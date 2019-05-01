@@ -8,14 +8,30 @@
 
 import UIKit
 
-class TweetViewController: UIViewController {
+class TweetViewController: UIViewController, UITextViewDelegate {
 
+    @IBOutlet weak var characterCount: UILabel!
     @IBOutlet weak var tweetTextView: UITextView!
+    var tweetLength : Int = 0
+    let tweetLimit : Int = 140 // constant
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        tweetTextView.delegate = self
+        characterCount.text = "\(tweetLength)/\(tweetLimit) characters"
         // Do any additional setup after loading the view.
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        tweetLength = tweetTextView.text.count
+        characterCount.text = "\(tweetLength)/\(tweetLimit) characters"
+        
+        if tweetLength > tweetLimit {
+            characterCount.textColor = UIColor.red
+        }
+        else {
+            characterCount.textColor = UIColor.black
+        }
     }
     
 
@@ -26,12 +42,14 @@ class TweetViewController: UIViewController {
     
     @IBAction func doTweet(_ sender: Any) {
         if (!tweetTextView.text.isEmpty) {
-            TwitterAPICaller.client?.postTweet(tweetString: tweetTextView.text, success: {
-                self.dismiss(animated: true, completion: nil)
-            }, failure: { (error) in
-                print("Error posting tweet \(error)")
-                self.dismiss(animated: true, completion: nil)
-            })
+            if (tweetLength <= tweetLimit) {
+                TwitterAPICaller.client?.postTweet(tweetString: tweetTextView.text, success: {
+                    self.dismiss(animated: true, completion: nil)
+                }, failure: { (error) in
+                    print("Error posting tweet \(error)")
+                    self.dismiss(animated: true, completion: nil)
+                })
+            }
         }
     }
     /*
